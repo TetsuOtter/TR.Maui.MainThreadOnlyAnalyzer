@@ -26,10 +26,14 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Restore dependencies
-        run: dotnet restore ${{ env.ANALYZER_PROJECT }} ${{ env.TEST_PROJECT }}
+        run: |
+          dotnet restore ${{ env.ANALYZER_PROJECT }}
+          dotnet restore ${{ env.TEST_PROJECT }}
 
       - name: Build
-        run: dotnet build --no-restore ${{ env.ANALYZER_PROJECT }} ${{ env.TEST_PROJECT }}
+        run: |
+          dotnet build --no-restore ${{ env.ANALYZER_PROJECT }}
+          dotnet build --no-restore ${{ env.TEST_PROJECT }}
 
       - name: Test
         run: dotnet test --no-build --verbosity normal

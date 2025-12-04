@@ -10,7 +10,8 @@ on:
 
 env:
   DOTNET_VERSION: "10.0.x"
-  PROJECT_PATH: "src/TR.Maui.MainThreadOnlyAnalyzer/TR.Maui.MainThreadOnlyAnalyzer.csproj"
+  ANALYZER_PROJECT: "src/TR.Maui.MainThreadOnlyAnalyzer/TR.Maui.MainThreadOnlyAnalyzer.csproj"
+  TEST_PROJECT: "test/TR.Maui.MainThreadOnlyAnalyzer.Tests/TR.Maui.MainThreadOnlyAnalyzer.Tests.csproj"
 
 jobs:
   check-version:
@@ -24,13 +25,13 @@ jobs:
       - name: Checkout csproj file
         uses: actions/checkout@v4
         with:
-          sparse-checkout: ${{ env.PROJECT_PATH }}
+          sparse-checkout: ${{ env.ANALYZER_PROJECT }}
           sparse-checkout-cone-mode: false
 
       - name: Extract version from csproj
         id: get_version
         run: |
-          VERSION=$(grep -oP '(?<=<Version>)[^<]+' "${{ env.PROJECT_PATH }}")
+          VERSION=$(grep -oP '(?<=<Version>)[^<]+' "${{ env.ANALYZER_PROJECT }}")
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
 
@@ -65,9 +66,10 @@ jobs:
 
       - name: Build and Pack
         run: |
-          dotnet restore ${{ env.PROJECT_PATH }}
-          dotnet build ${{ env.PROJECT_PATH }} --configuration Release --no-restore
-          dotnet pack ${{ env.PROJECT_PATH }} --configuration Release --no-build --output ./nupkg
+          dotnet restore ${{ env.ANALYZER_PROJECT }}
+          dotnet restore ${{ env.TEST_PROJECT }}
+          dotnet build ${{ env.ANALYZER_PROJECT }} --configuration Release --no-restore
+          dotnet pack ${{ env.ANALYZER_PROJECT }} --configuration Release --no-build --output ./nupkg
 
       - name: Create Tag
         run: |
