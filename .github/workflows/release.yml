@@ -65,8 +65,8 @@ jobs:
 
       - name: Build and Pack
         run: |
-          dotnet restore
-          dotnet build --configuration Release --no-restore
+          dotnet restore ${{ env.PROJECT_PATH }}
+          dotnet build ${{ env.PROJECT_PATH }} --configuration Release --no-restore
           dotnet pack ${{ env.PROJECT_PATH }} --configuration Release --no-build --output ./nupkg
 
       - name: Create Tag

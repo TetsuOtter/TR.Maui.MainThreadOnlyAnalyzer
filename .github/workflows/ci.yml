@@ -10,6 +10,8 @@ on:
 
 env:
   DOTNET_VERSION: "10.0.x"
+  ANALYZER_PROJECT: "src/TR.Maui.MainThreadOnlyAnalyzer/TR.Maui.MainThreadOnlyAnalyzer.csproj"
+  TEST_PROJECT: "test/TR.Maui.MainThreadOnlyAnalyzer.Tests/TR.Maui.MainThreadOnlyAnalyzer.Tests.csproj"
 
 jobs:
   test:
@@ -24,10 +26,10 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore ${{ env.ANALYZER_PROJECT }} ${{ env.TEST_PROJECT }}
 
       - name: Build
-        run: dotnet build --no-restore
+        run: dotnet build --no-restore ${{ env.ANALYZER_PROJECT }} ${{ env.TEST_PROJECT }}
 
       - name: Test
         run: dotnet test --no-build --verbosity normal
