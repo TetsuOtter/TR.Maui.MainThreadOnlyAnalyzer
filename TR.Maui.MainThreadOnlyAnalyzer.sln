@@ -5,8 +5,6 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72D-47B6-A68D-7590B98EB39B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TR.Maui.MainThreadOnlyAnalyzer.Attributes", "src\TR.Maui.MainThreadOnlyAnalyzer.Attributes\TR.Maui.MainThreadOnlyAnalyzer.Attributes.csproj", "{8B230E17-4688-477F-AAEF-A3079AFEEE86}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TR.Maui.MainThreadOnlyAnalyzer", "src\TR.Maui.MainThreadOnlyAnalyzer\TR.Maui.MainThreadOnlyAnalyzer.csproj", "{F8E373CA-7308-4AF1-A056-2BD2DE1B28BB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{0C88DD14-F956-CE84-757C-A364CCF449FC}"
@@ -80,7 +78,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{8B230E17-4688-477F-AAEF-A3079AFEEE86} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{F8E373CA-7308-4AF1-A056-2BD2DE1B28BB} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{C2F4E0F6-FC7A-462A-9D9E-E49776CC2BF9} = {0C88DD14-F956-CE84-757C-A364CCF449FC}
 		{D1E2F3A4-B5C6-7890-DCBA-FE0987654321} = {A1B2C3D4-E5F6-7890-ABCD-EF1234567890}

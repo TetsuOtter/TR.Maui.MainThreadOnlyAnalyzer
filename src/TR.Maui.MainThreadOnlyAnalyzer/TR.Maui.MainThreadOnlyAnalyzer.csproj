@@ -6,17 +6,20 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
-    
+
+    <!-- Define constant for conditional compilation -->
+    <DefineConstants>$(DefineConstants);MAIN_THREAD_ONLY_ANALYZER</DefineConstants>
+
     <!-- NuGet Package Properties -->
     <PackageId>TR.Maui.MainThreadOnlyAnalyzer</PackageId>
     <Version>1.0.0</Version>
     <Authors>TetsuOtter</Authors>
-    <Description>A Roslyn analyzer for .NET MAUI that warns when methods decorated with [MainThreadOnly] or MAUI UI APIs are invoked from background threads.</Description>
+    <Description>A Roslyn analyzer for .NET MAUI that warns when methods decorated with [MainThreadOnly] or MAUI UI APIs are invoked from background threads. Includes the MainThreadOnlyAttribute for marking methods.</Description>
     <PackageTags>maui;xamarin;analyzer;roslyn;main-thread;ui-thread</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/TetsuOtter/TR.Maui.MainThreadOnlyAnalyzer</RepositoryUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    
+
     <!-- Analyzer package configuration -->
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <DevelopmentDependency>true</DevelopmentDependency>

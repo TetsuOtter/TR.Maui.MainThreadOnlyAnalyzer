@@ -22,7 +22,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\TR.Maui.MainThreadOnlyAnalyzer\TR.Maui.MainThreadOnlyAnalyzer.csproj" />
-    <ProjectReference Include="..\..\src\TR.Maui.MainThreadOnlyAnalyzer.Attributes\TR.Maui.MainThreadOnlyAnalyzer.Attributes.csproj" />
   </ItemGroup>
 
 </Project>
