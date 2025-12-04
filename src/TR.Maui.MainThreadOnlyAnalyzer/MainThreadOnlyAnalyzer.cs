@@ -502,7 +502,7 @@ namespace TR.Maui.MainThreadOnlyAnalyzer
                     if (containingType == "System.Threading.Tasks.Parallel")
                         return true;
 
-                    // ConfigureAwait(false)
+                    // ConfigureAwait(false) - only count if not inside a main thread invoke call
                     if (method.Name == "ConfigureAwait")
                     {
                         var args = invocation.ArgumentList.Arguments;
@@ -535,22 +535,9 @@ namespace TR.Maui.MainThreadOnlyAnalyzer
                 }
             }
 
-            // Check for lambda/delegate passed to background methods
-            if (node is LambdaExpressionSyntax || node is AnonymousMethodExpressionSyntax)
-            {
-                var parent = node.Parent;
-                while (parent != null && parent is not ArgumentSyntax)
-                {
-                    parent = parent.Parent;
-                }
-
-                if (parent is ArgumentSyntax arg && arg.Parent is ArgumentListSyntax argList && 
-                    argList.Parent is InvocationExpressionSyntax parentInvocation)
-                {
-                    return IsBackgroundThreadContext(parentInvocation, semanticModel);
-                }
-            }
-
+            // Note: We don't check lambdas here anymore - they're implicitly covered
+            // when we detect the parent invocation (Task.Run, etc.)
+            
             return false;
         }
     }
