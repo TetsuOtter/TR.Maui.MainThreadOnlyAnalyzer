@@ -1,0 +1,21 @@
+{
+  "files.associations": {
+    "AnalyzerReleases.Shipped.md": "markdown",
+    "AnalyzerReleases.Unshipped.md": "markdown"
+  },
+  "[markdown]": {
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+    "editor.formatOnType": true
+  },
+  "AnalyzerReleases.Shipped.md": {
+    "editor.formatOnSave": false,
+    "editor.formatOnPaste": false,
+    "editor.formatOnType": false
+  },
+  "AnalyzerReleases.Unshipped.md": {
+    "editor.formatOnSave": false,
+    "editor.formatOnPaste": false,
+    "editor.formatOnType": false
+  }
+}
