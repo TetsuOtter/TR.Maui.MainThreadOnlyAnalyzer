@@ -403,7 +403,12 @@ namespace TR.Maui.MainThreadOnlyAnalyzer
             var statements = methodBody.DescendantNodes().OfType<StatementSyntax>().ToList();
             var nodeIndex = statements.IndexOf(containingStatement);
             
-            if (nodeIndex <= 0)
+            // If statement not found or is the first statement, there's nothing before it
+            if (nodeIndex < 0)
+                return false;
+            
+            // If this is the first statement (index 0), there are no prior statements to check
+            if (nodeIndex == 0)
                 return false;
 
             // Check statements before the current one
