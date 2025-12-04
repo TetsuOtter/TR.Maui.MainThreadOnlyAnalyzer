@@ -7,6 +7,7 @@ on:
     paths:
       - "src/TR.Maui.MainThreadOnlyAnalyzer/TR.Maui.MainThreadOnlyAnalyzer.csproj"
       - ".github/workflows/release.yml"
+  workflow_dispatch:
 
 env:
   DOTNET_VERSION: "10.0.x"
@@ -18,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.get_version.outputs.version }}
-      tag: ${{ steps.get_version.outputs.tag }}
+      tag: ${{ steps.check_tag.outputs.tag }}
       should-release: ${{ steps.check_tag.outputs.should-release }}
 
     steps:
@@ -33,25 +34,24 @@ jobs:
         run: |
           VERSION=$(grep -oP '(?<=<Version>)[^<]+' "${{ env.ANALYZER_PROJECT }}")
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Check if tag exists
         id: check_tag
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if gh release view "v${{ steps.get_version.outputs.version }}" >/dev/null 2>&1; then
+          VERSION="${{ steps.get_version.outputs.version }}"
+          if gh release view "v$VERSION" >/dev/null 2>&1; then
             echo "should-release=false" >> "$GITHUB_OUTPUT"
           else
             echo "should-release=true" >> "$GITHUB_OUTPUT"
           fi
+          echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
 
-  build-and-release:
+  build:
     needs: check-version
-    if: needs.check-version.outputs.should-release == 'true'
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
+    if: needs.check-version.outputs.should-release == 'true' || github.event_name == 'workflow_dispatch'
     env:
       NUPKG_FILENAME: "TR.Maui.MainThreadOnlyAnalyzer.${{ needs.check-version.outputs.version }}.nupkg"
 
@@ -71,12 +71,37 @@ jobs:
           dotnet build ${{ env.ANALYZER_PROJECT }} --configuration Release --no-restore
           dotnet pack ${{ env.ANALYZER_PROJECT }} --configuration Release --no-build --output ./nupkg
 
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nupkg
+          path: ./nupkg/${{ env.NUPKG_FILENAME }}
+
+  release:
+    needs: [check-version, build]
+    if: needs.check-version.outputs.should-release == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      NUPKG_FILENAME: "TR.Maui.MainThreadOnlyAnalyzer.${{ needs.check-version.outputs.version }}.nupkg"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Create Tag
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git tag ${{ needs.check-version.outputs.tag }}
           git push origin ${{ needs.check-version.outputs.tag }}
+
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: nupkg
+          path: ./nupkg
 
       - name: Create GitHub Release
         env:
