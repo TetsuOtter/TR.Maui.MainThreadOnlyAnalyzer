@@ -5,13 +5,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
-
-    <!-- Define constant for conditional compilation -->
-    <DefineConstants>$(DefineConstants);MAIN_THREAD_ONLY_ANALYZER</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\TR.Maui.MainThreadOnlyAnalyzer\TR.Maui.MainThreadOnlyAnalyzer.csproj" />
+    <PackageReference Include="TR.Maui.MainThreadOnlyAnalyzer" Version="1.0.1" />
   </ItemGroup>
 
 </Project>

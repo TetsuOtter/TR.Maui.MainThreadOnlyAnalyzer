@@ -12,7 +12,7 @@
 
     <!-- NuGet Package Properties -->
     <PackageId>TR.Maui.MainThreadOnlyAnalyzer</PackageId>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <Authors>TetsuOtter</Authors>
     <Description>A Roslyn analyzer for .NET MAUI that warns when methods decorated with [MainThreadOnly] or MAUI UI APIs are invoked from background threads. Includes the MainThreadOnlyAttribute for marking methods.</Description>
     <PackageTags>maui;xamarin;analyzer;roslyn;main-thread;ui-thread</PackageTags>
@@ -37,6 +37,7 @@
 
   <ItemGroup>
     <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+    <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="lib/netstandard2.0" Visible="false" />
   </ItemGroup>
 
 </Project>
