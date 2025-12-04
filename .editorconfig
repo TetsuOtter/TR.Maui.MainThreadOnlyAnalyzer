@@ -1,0 +1,9 @@
+root = true
+
+[*.md]
+trim_trailing_whitespace = false
+insert_final_newline = false
+
+[AnalyzerReleases.*.md]
+# Disable all formatting for release tracking files
+# These files use ASCII table format that should not be auto-formatted
