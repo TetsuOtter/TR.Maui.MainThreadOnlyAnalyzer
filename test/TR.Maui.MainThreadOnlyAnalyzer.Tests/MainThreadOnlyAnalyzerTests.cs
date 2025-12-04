@@ -4,26 +4,26 @@ using Microsoft.CodeAnalysis.CSharp.Testing;
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 
-namespace TR.Maui.MainThreadOnlyAnalyzer.Tests
+namespace TR.Maui.MainThreadOnlyAnalyzer.Tests;
+
+public class MainThreadOnlyAnalyzerTests
 {
-    public class MainThreadOnlyAnalyzerTests
+    private static async Task VerifyAnalyzerAsync(string source, params DiagnosticResult[] expected)
     {
-        private static async Task VerifyAnalyzerAsync(string source, params DiagnosticResult[] expected)
+        var test = new CSharpAnalyzerTest<MainThreadOnlyAnalyzer, DefaultVerifier>
         {
-            var test = new CSharpAnalyzerTest<MainThreadOnlyAnalyzer, DefaultVerifier>
-            {
-                TestCode = source,
-                ReferenceAssemblies = ReferenceAssemblies.Net.Net80,
-            };
+            TestCode = source,
+            ReferenceAssemblies = ReferenceAssemblies.Net.Net80,
+        };
 
-            test.ExpectedDiagnostics.AddRange(expected);
-            await test.RunAsync();
-        }
+        test.ExpectedDiagnostics.AddRange(expected);
+        await test.RunAsync();
+    }
 
-        [Fact]
-        public async Task NoDiagnostic_WhenMethodCalledFromNormalContext()
-        {
-            var source = @"
+    [Fact]
+    public async Task NoDiagnostic_WhenMethodCalledFromNormalContext()
+    {
+        var source = @"
 namespace TestNamespace
 {
     [System.AttributeUsage(System.AttributeTargets.Method | System.AttributeTargets.Property | System.AttributeTargets.Constructor)]
@@ -41,13 +41,13 @@ namespace TestNamespace
     }
 }";
 
-            await VerifyAnalyzerAsync(source);
-        }
+        await VerifyAnalyzerAsync(source);
+    }
 
-        [Fact]
-        public async Task Diagnostic_WhenMethodCalledFromTaskRun()
-        {
-            var source = @"
+    [Fact]
+    public async Task Diagnostic_WhenMethodCalledFromTaskRun()
+    {
+        var source = @"
 using System.Threading.Tasks;
 
 namespace TestNamespace
@@ -70,17 +70,17 @@ namespace TestNamespace
     }
 }";
 
-            var expected = new DiagnosticResult("MAUIMT001", DiagnosticSeverity.Warning)
-                .WithLocation(0)
-                .WithArguments("MainThreadMethod");
+        var expected = new DiagnosticResult("MAUIMT001", DiagnosticSeverity.Warning)
+            .WithLocation(0)
+            .WithArguments("MainThreadMethod");
 
-            await VerifyAnalyzerAsync(source, expected);
-        }
+        await VerifyAnalyzerAsync(source, expected);
+    }
 
-        [Fact]
-        public async Task Diagnostic_WhenMethodCalledFromThreadPoolQueueUserWorkItem()
-        {
-            var source = @"
+    [Fact]
+    public async Task Diagnostic_WhenMethodCalledFromThreadPoolQueueUserWorkItem()
+    {
+        var source = @"
 using System.Threading;
 
 namespace TestNamespace
@@ -103,17 +103,17 @@ namespace TestNamespace
     }
 }";
 
-            var expected = new DiagnosticResult("MAUIMT001", DiagnosticSeverity.Warning)
-                .WithLocation(0)
-                .WithArguments("MainThreadMethod");
+        var expected = new DiagnosticResult("MAUIMT001", DiagnosticSeverity.Warning)
+            .WithLocation(0)
+            .WithArguments("MainThreadMethod");
 
-            await VerifyAnalyzerAsync(source, expected);
-        }
+        await VerifyAnalyzerAsync(source, expected);
+    }
 
-        [Fact]
-        public async Task Diagnostic_WhenMethodCalledFromTaskFactoryStartNew()
-        {
-            var source = @"
+    [Fact]
+    public async Task Diagnostic_WhenMethodCalledFromTaskFactoryStartNew()
+    {
+        var source = @"
 using System.Threading.Tasks;
 
 namespace TestNamespace
@@ -136,17 +136,17 @@ namespace TestNamespace
     }
 }";
 
-            var expected = new DiagnosticResult("MAUIMT001", DiagnosticSeverity.Warning)
-                .WithLocation(0)
-                .WithArguments("MainThreadMethod");
+        var expected = new DiagnosticResult("MAUIMT001", DiagnosticSeverity.Warning)
+            .WithLocation(0)
+            .WithArguments("MainThreadMethod");
 
-            await VerifyAnalyzerAsync(source, expected);
-        }
+        await VerifyAnalyzerAsync(source, expected);
+    }
 
-        [Fact]
-        public async Task Diagnostic_WhenMethodCalledFromParallelForEach()
-        {
-            var source = @"
+    [Fact]
+    public async Task Diagnostic_WhenMethodCalledFromParallelForEach()
+    {
+        var source = @"
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
@@ -171,17 +171,17 @@ namespace TestNamespace
     }
 }";
 
-            var expected = new DiagnosticResult("MAUIMT001", DiagnosticSeverity.Warning)
-                .WithLocation(0)
-                .WithArguments("MainThreadMethod");
+        var expected = new DiagnosticResult("MAUIMT001", DiagnosticSeverity.Warning)
+            .WithLocation(0)
+            .WithArguments("MainThreadMethod");
 
-            await VerifyAnalyzerAsync(source, expected);
-        }
+        await VerifyAnalyzerAsync(source, expected);
+    }
 
-        [Fact]
-        public async Task NoDiagnostic_WhenMethodCalledFromMainThreadInvoke()
-        {
-            var source = @"
+    [Fact]
+    public async Task NoDiagnostic_WhenMethodCalledFromMainThreadInvoke()
+    {
+        var source = @"
 using System;
 using System.Threading.Tasks;
 
@@ -213,13 +213,13 @@ namespace TestNamespace
     }
 }";
 
-            await VerifyAnalyzerAsync(source);
-        }
+        await VerifyAnalyzerAsync(source);
+    }
 
-        [Fact]
-        public async Task NoDiagnostic_WhenMethodCalledFromDispatcherInvoke()
-        {
-            var source = @"
+    [Fact]
+    public async Task NoDiagnostic_WhenMethodCalledFromDispatcherInvoke()
+    {
+        var source = @"
 using System;
 using System.Threading.Tasks;
 
@@ -253,13 +253,13 @@ namespace TestNamespace
     }
 }";
 
-            await VerifyAnalyzerAsync(source);
-        }
+        await VerifyAnalyzerAsync(source);
+    }
 
-        [Fact]
-        public async Task Diagnostic_WhenMethodCalledAfterConfigureAwaitFalse()
-        {
-            var source = @"
+    [Fact]
+    public async Task Diagnostic_WhenMethodCalledAfterConfigureAwaitFalse()
+    {
+        var source = @"
 using System.Threading.Tasks;
 
 namespace TestNamespace
@@ -280,17 +280,17 @@ namespace TestNamespace
     }
 }";
 
-            var expected = new DiagnosticResult("MAUIMT001", DiagnosticSeverity.Warning)
-                .WithLocation(0)
-                .WithArguments("MainThreadMethod");
+        var expected = new DiagnosticResult("MAUIMT001", DiagnosticSeverity.Warning)
+            .WithLocation(0)
+            .WithArguments("MainThreadMethod");
 
-            await VerifyAnalyzerAsync(source, expected);
-        }
+        await VerifyAnalyzerAsync(source, expected);
+    }
 
-        [Fact]
-        public async Task NoDiagnostic_WhenMethodCalledAfterConfigureAwaitTrue()
-        {
-            var source = @"
+    [Fact]
+    public async Task NoDiagnostic_WhenMethodCalledAfterConfigureAwaitTrue()
+    {
+        var source = @"
 using System.Threading.Tasks;
 
 namespace TestNamespace
@@ -311,13 +311,13 @@ namespace TestNamespace
     }
 }";
 
-            await VerifyAnalyzerAsync(source);
-        }
+        await VerifyAnalyzerAsync(source);
+    }
 
-        [Fact]
-        public async Task Diagnostic_WhenPropertyAccessedFromTaskRun()
-        {
-            var source = @"
+    [Fact]
+    public async Task Diagnostic_WhenPropertyAccessedFromTaskRun()
+    {
+        var source = @"
 using System.Threading.Tasks;
 
 namespace TestNamespace
@@ -340,17 +340,17 @@ namespace TestNamespace
     }
 }";
 
-            var expected = new DiagnosticResult("MAUIMT001", DiagnosticSeverity.Warning)
-                .WithLocation(0)
-                .WithArguments("MainThreadProperty");
+        var expected = new DiagnosticResult("MAUIMT001", DiagnosticSeverity.Warning)
+            .WithLocation(0)
+            .WithArguments("MainThreadProperty");
 
-            await VerifyAnalyzerAsync(source, expected);
-        }
+        await VerifyAnalyzerAsync(source, expected);
+    }
 
-        [Fact]
-        public async Task Diagnostic_WhenMethodCalledFromContinueWith()
-        {
-            var source = @"
+    [Fact]
+    public async Task Diagnostic_WhenMethodCalledFromContinueWith()
+    {
+        var source = @"
 using System.Threading.Tasks;
 
 namespace TestNamespace
@@ -373,11 +373,10 @@ namespace TestNamespace
     }
 }";
 
-            var expected = new DiagnosticResult("MAUIMT001", DiagnosticSeverity.Warning)
-                .WithLocation(0)
-                .WithArguments("MainThreadMethod");
+        var expected = new DiagnosticResult("MAUIMT001", DiagnosticSeverity.Warning)
+            .WithLocation(0)
+            .WithArguments("MainThreadMethod");
 
-            await VerifyAnalyzerAsync(source, expected);
-        }
+        await VerifyAnalyzerAsync(source, expected);
     }
 }
