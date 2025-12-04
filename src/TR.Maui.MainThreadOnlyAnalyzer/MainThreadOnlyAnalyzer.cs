@@ -142,13 +142,9 @@ public class MainThreadOnlyAnalyzer : DiagnosticAnalyzer
         if (containingType == null)
             return false;
 
-        // Check if the method is a known main-thread method
-        if (AnalyzerConstants.MauiMainThreadMethods.Contains(method.Name))
-        {
-            // Verify it's on a MAUI type
-            if (IsMauiUiType(containingType))
-                return true;
-        }
+        // Check if the method is a known main-thread method on a MAUI type
+        if (AnalyzerConstants.MauiMainThreadMethods.Contains(method.Name) && IsMauiUiType(containingType))
+            return true;
 
         // Check if it's a member of a MAUI UI type (all members should be main thread)
         return IsMauiUiType(containingType);
@@ -168,12 +164,9 @@ public class MainThreadOnlyAnalyzer : DiagnosticAnalyzer
             if (AnalyzerConstants.MauiUiTypeNames.Contains(fullName))
                 return true;
 
-            // Check interfaces
-            foreach (var iface in type.AllInterfaces)
-            {
-                if (AnalyzerConstants.MauiUiTypeNames.Contains(iface.ToDisplayString()))
-                    return true;
-            }
+            // Check interfaces using explicit filter
+            if (type.AllInterfaces.Any(iface => AnalyzerConstants.MauiUiTypeNames.Contains(iface.ToDisplayString())))
+                return true;
 
             type = type.BaseType;
         }
@@ -343,20 +336,8 @@ public class MainThreadOnlyAnalyzer : DiagnosticAnalyzer
                 if (containingType == "System.Threading.Tasks.Parallel")
                     return true;
 
-                // ConfigureAwait(false) - only count if not inside a main thread invoke call
-                if (method.Name == "ConfigureAwait")
-                {
-                    var args = invocation.ArgumentList.Arguments;
-                    if (args.Count > 0)
-                    {
-                        var firstArg = args[0].Expression;
-                        if (firstArg is LiteralExpressionSyntax literal && 
-                            literal.Kind() == SyntaxKind.FalseLiteralExpression)
-                        {
-                            return true;
-                        }
-                    }
-                }
+                // Note: ConfigureAwait(false) is handled by IsAfterConfigureAwaitFalse 
+                // which performs sequential flow analysis rather than ancestry check
             }
         }
 

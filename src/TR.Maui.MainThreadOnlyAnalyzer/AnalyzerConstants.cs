@@ -122,40 +122,6 @@ internal static class AnalyzerConstants
     };
 
     /// <summary>
-    /// Types that indicate non-main thread context.
-    /// </summary>
-    public static readonly HashSet<string> BackgroundContextTypes = new(StringComparer.Ordinal)
-    {
-        "System.Threading.Tasks.Task",
-        "System.Threading.Thread",
-        "System.Threading.ThreadPool",
-        "System.Threading.Timer",
-        "System.ComponentModel.BackgroundWorker",
-    };
-
-    /// <summary>
-    /// Methods that start background execution.
-    /// </summary>
-    public static readonly HashSet<string> BackgroundStartMethods = new(StringComparer.Ordinal)
-    {
-        // Task methods
-        "Run",
-        "Factory.StartNew",
-        "StartNew",
-        "ContinueWith",
-        
-        // Thread methods  
-        "Start",
-        
-        // ThreadPool methods
-        "QueueUserWorkItem",
-        "UnsafeQueueUserWorkItem",
-        "RegisterWaitForSingleObject",
-        
-        // Timer constructor handled separately
-    };
-
-    /// <summary>
     /// Methods that switch back to main thread.
     /// </summary>
     public static readonly HashSet<string> MainThreadInvokeMethods = new(StringComparer.Ordinal)
