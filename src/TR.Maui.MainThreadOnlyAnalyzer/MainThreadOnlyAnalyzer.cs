@@ -1,5 +1,4 @@
 using System.Collections.Immutable;
-using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -40,7 +39,7 @@ public class MainThreadOnlyAnalyzer : DiagnosticAnalyzer
     private void AnalyzeInvocation(SyntaxNodeAnalysisContext context)
     {
         var invocation = (InvocationExpressionSyntax)context.Node;
-        
+
         var symbolInfo = context.SemanticModel.GetSymbolInfo(invocation, context.CancellationToken);
         if (symbolInfo.Symbol is not IMethodSymbol methodSymbol)
             return;
@@ -58,7 +57,7 @@ public class MainThreadOnlyAnalyzer : DiagnosticAnalyzer
     private void AnalyzeMemberAccess(SyntaxNodeAnalysisContext context)
     {
         var memberAccess = (MemberAccessExpressionSyntax)context.Node;
-        
+
         // Skip if this is part of an invocation (handled by AnalyzeInvocation)
         if (memberAccess.Parent is InvocationExpressionSyntax)
             return;
@@ -80,11 +79,11 @@ public class MainThreadOnlyAnalyzer : DiagnosticAnalyzer
     private void AnalyzeIdentifier(SyntaxNodeAnalysisContext context)
     {
         var identifier = (IdentifierNameSyntax)context.Node;
-        
+
         // Skip if this is part of a member access expression (handled by AnalyzeMemberAccess)
         if (identifier.Parent is MemberAccessExpressionSyntax memberAccess && memberAccess.Name == identifier)
             return;
-        
+
         // Skip if this is part of an invocation expression (handled by AnalyzeInvocation)
         if (identifier.Parent is InvocationExpressionSyntax)
             return;
@@ -213,13 +212,13 @@ public class MainThreadOnlyAnalyzer : DiagnosticAnalyzer
         // Find the containing method or lambda
         var containingMethod = node.FirstAncestorOrSelf<MethodDeclarationSyntax>();
         var containingLambda = node.FirstAncestorOrSelf<LambdaExpressionSyntax>();
-        
+
         SyntaxNode? methodBody = containingMethod?.Body as SyntaxNode ?? containingMethod?.ExpressionBody;
         if (containingLambda != null)
         {
             methodBody = containingLambda.Body;
         }
-        
+
         if (methodBody == null)
             return false;
 
@@ -231,11 +230,11 @@ public class MainThreadOnlyAnalyzer : DiagnosticAnalyzer
         // Look for await expressions with ConfigureAwait(false) that come before this statement
         var statements = methodBody.DescendantNodes().OfType<StatementSyntax>().ToList();
         var nodeIndex = statements.IndexOf(containingStatement);
-        
+
         // If statement not found or is the first statement, there's nothing before it
         if (nodeIndex < 0)
             return false;
-        
+
         // If this is the first statement (index 0), there are no prior statements to check
         if (nodeIndex == 0)
             return false;
@@ -290,7 +289,7 @@ public class MainThreadOnlyAnalyzer : DiagnosticAnalyzer
             // Accept any class named MainThread or Dispatcher or containing those
             var containingTypeName = method.ContainingType?.Name ?? "";
             var fullTypeName = method.ContainingType?.ToDisplayString() ?? "";
-            
+
             if (containingTypeName == "MainThread" ||
                 containingTypeName == "Dispatcher" ||
                 containingTypeName == "Device" ||
@@ -314,7 +313,7 @@ public class MainThreadOnlyAnalyzer : DiagnosticAnalyzer
             if (symbolInfo.Symbol is IMethodSymbol method)
             {
                 var containingType = method.ContainingType?.ToDisplayString() ?? "";
-                
+
                 // Task.Run
                 if (containingType == "System.Threading.Tasks.Task" && method.Name == "Run")
                     return true;
@@ -328,7 +327,7 @@ public class MainThreadOnlyAnalyzer : DiagnosticAnalyzer
                     return true;
 
                 // ThreadPool.QueueUserWorkItem
-                if (containingType == "System.Threading.ThreadPool" && 
+                if (containingType == "System.Threading.ThreadPool" &&
                     (method.Name == "QueueUserWorkItem" || method.Name == "UnsafeQueueUserWorkItem"))
                     return true;
 
@@ -348,7 +347,7 @@ public class MainThreadOnlyAnalyzer : DiagnosticAnalyzer
             if (symbolInfo.Symbol is IMethodSymbol ctor)
             {
                 var typeName = ctor.ContainingType?.ToDisplayString() ?? "";
-                if (typeName == "System.Threading.Thread" || 
+                if (typeName == "System.Threading.Thread" ||
                     typeName == "System.Threading.Timer" ||
                     typeName == "System.ComponentModel.BackgroundWorker")
                 {
@@ -359,7 +358,7 @@ public class MainThreadOnlyAnalyzer : DiagnosticAnalyzer
 
         // Note: We don't check lambdas here anymore - they're implicitly covered
         // when we detect the parent invocation (Task.Run, etc.)
-        
+
         return false;
     }
 }
