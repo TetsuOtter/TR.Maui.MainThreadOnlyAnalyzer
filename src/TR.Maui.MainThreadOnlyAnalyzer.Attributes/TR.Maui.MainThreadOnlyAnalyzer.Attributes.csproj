@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    
+    <!-- NuGet Package Properties -->
+    <PackageId>TR.Maui.MainThreadOnlyAnalyzer.Attributes</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>TetsuOtter</Authors>
+    <Description>Provides MainThreadOnlyAttribute for marking methods that should only be called from the main thread.</Description>
+    <PackageTags>maui;xamarin;main-thread;attribute;ui-thread</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/TetsuOtter/TR.Maui.MainThreadOnlyAnalyzer</RepositoryUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+</Project>
