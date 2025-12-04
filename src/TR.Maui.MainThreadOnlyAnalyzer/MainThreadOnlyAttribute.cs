@@ -2,7 +2,6 @@ using System;
 
 namespace TR.Maui.MainThreadOnlyAnalyzer
 {
-#if MAIN_THREAD_ONLY_ANALYZER
   /// <summary>
   /// Indicates that the method should only be called from the main (UI) thread.
   /// The analyzer will warn when this method is called from a potentially non-main thread context.
@@ -15,5 +14,4 @@ namespace TR.Maui.MainThreadOnlyAnalyzer
     /// </summary>
     public MainThreadOnlyAttribute() { }
   }
-#endif
 }
